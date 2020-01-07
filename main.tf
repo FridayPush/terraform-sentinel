@@ -17,14 +17,14 @@ resource "google_storage_default_object_acl" "public-object-default-acl" {
   bucket = "${google_storage_bucket.validate-store.name}"
   role_entity = [
     "OWNER:user-my.email@gmail.com",
-    "READER:allUsers",
+    "READER:bob@bob.com",
   ]
 }
 
 resource "google_storage_default_object_access_control" "public_object-access-control" {
   bucket = "${google_storage_bucket.validate-store.name}"
   role   = "READER"
-  entity = "allUsers"
+  entity = "sue@sue.com"
 }
 
 #####
@@ -32,7 +32,7 @@ resource "google_storage_default_object_access_control" "public_object-access-co
 resource "google_storage_bucket_access_control" "public_bucket_access_control" {
   bucket = "${google_storage_bucket.validate-store.name}"
   role   = "READER"
-  entity = "allUsers"
+  entity = "user@email.com"
 }
 
 resource "google_storage_bucket_acl" "public_bucket_acl" {
@@ -40,6 +40,6 @@ resource "google_storage_bucket_acl" "public_bucket_acl" {
 
   role_entity = [
     "OWNER:user-my.email@gmail.com",
-    "READER:allUsers",
+    "READER:sue@sue.com",
   ]
 }
