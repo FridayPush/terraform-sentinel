@@ -1,6 +1,13 @@
-# Bucket Enforce Versioning Enabled
+# Require google_sql_database_instance SSL
+resource "google_sql_database_instance" "postgres" {
+  name             = "postgres-instance-946848957"
+  database_version = "POSTGRES_11"
 
-resource "google_storage_bucket" "versioning-example" {
-  name     = "versioning-bucket-232151213"
-  location = "US"
+  settings {
+    tier = "db-f1-micro"
+
+    ip_configuration {
+      require_ssl = true
+    }
+  }
 }
