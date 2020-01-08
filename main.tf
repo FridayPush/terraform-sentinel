@@ -1,4 +1,8 @@
-# Bigquery Prevent Public Access
+# Bigquery Prevent Domain Wide Access
+provider "google" {
+  project     = "faux-dev"
+  region      = "us-central1"
+}
 
 resource "google_bigquery_dataset" "dataset" {
   dataset_id                  = "example_dataset"
@@ -13,11 +17,11 @@ resource "google_bigquery_dataset" "dataset" {
 
   access {
     role          = "OWNER"
-    user_by_email = "Joe@example.com"
+    user_by_email = "admin@fauxpass.com"
   }
 
   access {
     role   = "READER"
-    user_by_email = "bob@bob.com"
+    domain = "test.com"
   }
 }
