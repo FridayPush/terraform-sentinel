@@ -18,6 +18,6 @@ resource "google_bigquery_dataset" "dataset" {
 
   access {
     role   = "READER"
-    special_group = "allAuthenticatedUsers"
+    user_by_email = "bob@bob.com"
   }
 }
