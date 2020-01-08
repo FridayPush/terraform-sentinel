@@ -17,7 +17,7 @@ resource "google_bigquery_dataset" "dataset" {
 
   access {
     role          = "OWNER"
-    user_by_email = "admin@fauxpass.com"
+    user_by_email = "bob@bob.com"
   }
 
   access {
