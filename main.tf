@@ -28,13 +28,5 @@ resource "google_bigquery_dataset" "dataset" {
     role          = "READER"
     user_by_email = "bob@gaf.com"
   }
-  access {
-    role          = "READER"
-    user_by_email = "bob@sampledomain.com"
-  }
-  access {
-    role          = "READER"
-    user_by_email = "bob@example.com.com"
-  }
 
 }
