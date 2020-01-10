@@ -1,12 +1,12 @@
 # Bigquery Prevent Domain Wide Access
 resource "google_project" "my" {
   name       = "Project with labels"
-  project_id = "custom-id-hex92319232"
+  project_id = "${var.project_name}"
 
 }
 
 resource "google_compute_disk" "default" {
-  name  = "test-disk"
+  name = "${var.id_string}"
   type  = "pd-ssd"
   zone  = "us-central1-a"
   image = "debian-8-jessie-v20170523"
