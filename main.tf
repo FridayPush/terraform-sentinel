@@ -24,6 +24,7 @@ resource "google_compute_network" "vpc_network" {
 
 variable "id_string" {
   default ="idstring"
+  description = "This also has a description"
 }
 
 variable "project_name" {
