@@ -18,3 +18,6 @@ resource "google_pubsub_topic" "example" {
 
 }
 
+resource "google_compute_network" "vpc_network" {
+  name = "vpc-network"
+}
