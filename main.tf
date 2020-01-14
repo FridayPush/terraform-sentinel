@@ -12,15 +12,6 @@ resource "google_compute_disk" "default" {
   physical_block_size_bytes = 4096
 }
 
-resource "google_pubsub_topic" "example" {
-  name = "example-topic"
-
-}
-
-resource "google_compute_network" "vpc_network" {
-  name = "vpc-network"
-}
-
 
 variable "id_string" {
   default ="idstring"
