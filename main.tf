@@ -17,6 +17,10 @@ resource "google_pubsub_topic" "example" {
 
 }
 
+resource "google_pubsub_topic" "topicname" {
+  name = "p-gaf-topicname"
+}
+
 resource "google_compute_network" "vpc_network" {
   name = "vpc-network"
 }
