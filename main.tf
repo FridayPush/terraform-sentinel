@@ -11,16 +11,6 @@ resource "google_compute_disk" "default" {
   image = "debian-8-jessie-v20170523"
   physical_block_size_bytes = 4096
 }
-
-resource "google_pubsub_topic" "example" {
-  name = "p-si-topicname"
-
-}
-
-resource "google_pubsub_topic" "topicname" {
-  name = "p-gaf-topicname"
-}
-
 resource "google_compute_network" "vpc_network" {
   name = "vpc-network"
 }
@@ -29,9 +19,4 @@ resource "google_compute_network" "vpc_network" {
 variable "id_string" {
   default ="idstring"
   description = "This also has a description"
-}
-
-variable "project_name" {
-  description = "Project has a description"
-  default = "np-si-projectname"
 }
