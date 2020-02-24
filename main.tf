@@ -1,22 +1,36 @@
-# Bigquery Prevent Domain Wide Access
-resource "google_project" "my" {
-  name       = "Project with labels"
-  project_id = "${var.project_name}"
+# google_storage_object_acl is not tested, allowing individual
+# objects to be declared public if necessary. 
+# This file was used to generate the Mocks for sentinel
+resource "google_storage_bucket" "validate-store" {
+  name     = "sentinel-test-${random_string.random.result}"
+  location = "US"
 }
 
-resource "google_compute_disk" "default" {
-  name = "${var.id_string}"
-  type  = "pd-ssd"
-  zone  = "us-central1-a"
-  image = "debian-8-jessie-v20170523"
-  physical_block_size_bytes = 4096
-}
-resource "google_compute_network" "vpc_network" {
-  name = "vpc-network"
+resource "random_string" "random" {
+  length = 6
+  special = false
 }
 
+#####
+# Prevent Public buckets through object level defaults
+resource "google_storage_default_object_acl" "public-object-default-acl" {
+  bucket = "${google_storage_bucket.validate-store.name}"
+  role_entity = [
+    "OWNER:user-my.email@gmail.com",
+    "READER:allUsers",
+  ]
+}
+resource "google_storage_bucket_acl" "public_bucket_acl" {
+  bucket = "${google_storage_bucket.validate-store.name}"
+  predefined_acl = "publicRead"
+}
 
-variable "id_string" {
-  default ="idstring"
-  description = "This also has a description"
+resource "google_storage_bucket_acl" "public_bucket_acl" {
+  bucket = "${google_storage_bucket.validate-store.name}"
+  predefined_acl = "authenticatedRead"
+}
+
+resource "google_storage_bucket_acl" "public_bucket_acl" {
+  bucket = "${google_storage_bucket.validate-store.name}"
+  default_acl = "publicReadWrite"
 }
