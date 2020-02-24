@@ -13,18 +13,33 @@ resource "random_string" "random" {
 
 #####
 # Prevent Public buckets through object level defaults
-
-resource "google_storage_bucket_acl" "pubread_bucket_acl" {
+resource "google_storage_default_object_acl" "public-object-default-acl" {
   bucket = "${google_storage_bucket.validate-store.name}"
-  predefined_acl = "publicRead"
+  role_entity = [
+    "OWNER:user-my.email@gmail.com",
+    "roles/storage.legacyBucketReader:auseremail@domain.com",
+  ]
 }
 
-resource "google_storage_bucket_acl" "all_authn_bucket_acl" {
+resource "google_storage_default_object_access_control" "public_object-access-control" {
   bucket = "${google_storage_bucket.validate-store.name}"
-  predefined_acl = "authenticatedRead"
+  role   = "roles/storage.legacyBucketReader"
+  entity = "auseremail@domain.com"
 }
 
-resource "google_storage_bucket_acl" "pubreadwrite_bucket_acl" {
+#####
+# Prevent Fully Public buckets through BUCKET level defaults
+resource "google_storage_bucket_access_control" "public_bucket_access_control" {
   bucket = "${google_storage_bucket.validate-store.name}"
-  default_acl = "publicReadWrite"
+  role   = "roles/storage.legacyBucketReader"
+  entity = "auseremail@domain.com"
+}
+
+resource "google_storage_bucket_acl" "public_bucket_acl" {
+  bucket = "${google_storage_bucket.validate-store.name}"
+
+  role_entity = [
+    "OWNER:user-my.email@gmail.com",
+    "roles/storage.legacyBucketReader:auseremail@domain.com",
+  ]
 }
