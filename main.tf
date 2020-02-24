@@ -20,17 +20,17 @@ resource "google_storage_default_object_acl" "public-object-default-acl" {
     "READER:allUsers",
   ]
 }
-resource "google_storage_bucket_acl" "public_bucket_acl" {
+resource "google_storage_bucket_acl" "pubread_bucket_acl" {
   bucket = "${google_storage_bucket.validate-store.name}"
   predefined_acl = "publicRead"
 }
 
-resource "google_storage_bucket_acl" "public_bucket_acl" {
+resource "google_storage_bucket_acl" "all_authn_bucket_acl" {
   bucket = "${google_storage_bucket.validate-store.name}"
   predefined_acl = "authenticatedRead"
 }
 
-resource "google_storage_bucket_acl" "public_bucket_acl" {
+resource "google_storage_bucket_acl" "pubreadwrite_bucket_acl" {
   bucket = "${google_storage_bucket.validate-store.name}"
   default_acl = "publicReadWrite"
 }
