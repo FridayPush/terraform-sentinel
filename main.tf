@@ -14,7 +14,7 @@ resource "google_bigquery_dataset" "dataset-w-labels" {
 }
 
 resource "google_bigquery_table" "default" {
-  dataset_id = google_bigquery_dataset.dataset-w-labels.dataset_id
+  dataset_id = "${google_bigquery_dataset.dataset-w-labels.dataset_id}"
   table_id   = "bar"
 
   labels = {
