@@ -9,7 +9,9 @@ resource "google_bigquery_dataset" "dataset-w-labels" {
   default_table_expiration_ms = 3600000
 
   labels = {
-    env = "default"
+    env = "default",
+    pipe = "world",
+    foo = "test"
   }
 }
 
@@ -18,7 +20,8 @@ resource "google_bigquery_table" "default" {
   table_id   = "bar"
 
   labels = {
-    env = "default"
+    env = "default",
+    foo = "now"
   }
 
   schema = <<EOF
@@ -47,7 +50,8 @@ resource "google_compute_image" "disk-w-labels" {
   }
 
   labels = {
-    env = "default"
+    env = "default",
+    foo = "what"
   }
 }
 
@@ -57,7 +61,9 @@ resource "google_compute_instance" "instance-w-labels" {
   zone         = "us-central1-a"
   
   labels = {
-    env = "default"
+    env = "test",
+    foo = "bar",
+    fee = "what"
   }
 
   boot_disk {
@@ -84,7 +90,8 @@ resource "google_project" "project-w-labels" {
   org_id     = "1234567"
 
   labels = {
-    env = "default"
+    env = "test",
+    foo = "bar"
   }
 }
 
@@ -92,6 +99,7 @@ resource "google_pubsub_topic" "topic-w-labels" {
   name = "example-topic"
 
   labels = {
+    env = "test",
     foo = "bar"
   }
 }
