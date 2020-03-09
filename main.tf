@@ -6,6 +6,13 @@ resource "google_storage_bucket" "validate-store" {
   location = "US"
 }
 
+resource "google_storage_bucket_iam_member" "editor" {
+  bucket = "${google_storage_bucket.validate-store.name}"
+  role = "roles/storage.legacyObjectOwner"
+  member = "user:jane@example.com"
+}
+
+
 resource "random_string" "random" {
   length = 6
   special = false
