@@ -36,17 +36,3 @@ resource "google_storage_bucket_acl" "public_bucket_acl" {
     "roles/storage.legacyBucketReader:auseremail@domain.com",
   ]
 }
-
-resource "google_storage_default_object_access_control" "public_object-access-control" {
-  bucket = "${google_storage_bucket.validate-store.name}"
-  role   = "roles/storage.legacyBucketReader"
-  entity = "allUsers"
-}
-
-#####
-# Prevent Fully Public buckets through BUCKET level defaults
-resource "google_storage_bucket_access_control" "public_bucket_access_control" {
-  bucket = "${google_storage_bucket.validate-store.name}"
-  role   = "roles/storage.legacyBucketReader"
-  entity = "allUsers"
-}
