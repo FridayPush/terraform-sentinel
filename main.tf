@@ -21,5 +21,5 @@ resource "google_compute_firewall" "http-ingress" {
     ports    = ["3000"]
   }
 
-  source_ranges = ["10.20.30.40/24","0.0.0.0/0"]
+  source_ranges = ["10.20.30.40/24"]
 }
