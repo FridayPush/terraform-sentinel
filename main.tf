@@ -8,7 +8,7 @@ resource "google_storage_bucket" "validate-store" {
 
 resource "google_storage_bucket_iam_binding" "legacy-binding" {
   bucket = "${google_storage_bucket.validate-store.name}"
-  role = "roles/storage.legacyObjectOwner"
+  role = "roles/storage.objectCreator"
   members = [
     "user:jane@example.com",
   ]
@@ -16,7 +16,7 @@ resource "google_storage_bucket_iam_binding" "legacy-binding" {
 
 resource "google_storage_bucket_iam_member" "legacy-member" {
   bucket = "${google_storage_bucket.validate-store.name}"
-  role = "roles/storage.legacyObjectOwner"
+  role = "roles/storage.objectCreator"
   member = "user:jane@example.com"
 }
 
