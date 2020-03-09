@@ -6,19 +6,20 @@ resource "google_storage_bucket" "validate-store" {
   location = "US"
 }
 
-resource "google_storage_bucket_iam_member" "editor" {
+resource "google_storage_bucket_iam_binding" "legacy-binding" {
+  bucket = "${google_storage_bucket.validate-store.name}"
+  role = "roles/storage.legacyObjectOwner"
+  members = [
+    "user:jane@example.com",
+  ]
+}
+
+resource "google_storage_bucket_iam_member" "legacy-member" {
   bucket = "${google_storage_bucket.validate-store.name}"
   role = "roles/storage.legacyObjectOwner"
   member = "user:jane@example.com"
 }
 
-
-resource "random_string" "random" {
-  length = 6
-  special = false
-}
-
-#####
 # Prevent Public buckets through object level defaults
 resource "google_storage_default_object_acl" "public-object-default-acl" {
   bucket = "${google_storage_bucket.validate-store.name}"
@@ -35,4 +36,10 @@ resource "google_storage_bucket_acl" "public_bucket_acl" {
     "OWNER:user-my.email@gmail.com",
     "roles/storage.legacyBucketReader:auseremail@domain.com",
   ]
+}
+
+
+resource "random_string" "random" {
+  length = 6
+  special = false
 }
