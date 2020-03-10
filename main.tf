@@ -1,150 +1,67 @@
-# This manifest only creates a dozen or so resources that contain labels
-# To produce the failed resources uncomment the bottom section
-
-resource "google_bigquery_dataset" "dataset-w-labels" {
-  dataset_id                  = "example_dataset"
-  friendly_name               = "test"
-  description                 = "This is a test description"
-  location                    = "US"
-  default_table_expiration_ms = 3600000
-
-  labels = {
-    env = "default",
-    pipe = "world",
-    foo = "test"
-  }
-}
-
-resource "google_bigquery_table" "default" {
-  dataset_id = "${google_bigquery_dataset.dataset-w-labels.dataset_id}"
-  table_id   = "bar"
-
-  labels = {
-    env = "default",
-    foo = "now"
-  }
-
-  schema = <<EOF
-[
-  {
-    "name": "permalink",
-    "type": "STRING",
-    "mode": "NULLABLE",
-    "description": "The Permalink"
-  },
-  {
-    "name": "state",
-    "type": "STRING",
-    "mode": "NULLABLE",
-    "description": "State where the head office is located"
-  }
-]
-EOF
-}
-
-resource "google_compute_image" "disk-w-labels" {
-  name = "example-image"
-
-  raw_disk {
-    source = "https://storage.googleapis.com/bosh-cpi-artifacts/bosh-stemcell-3262.4-google-kvm-ubuntu-trusty-go_agent-raw.tar.gz"
-  }
-
-  labels = {
-    env = "default",
-    foo = "what"
-  }
-}
-
-resource "google_compute_instance" "instance-w-labels" {
-  name         = "test"
-  machine_type = "n1-standard-1"
-  zone         = "us-central1-a"
-  
-  labels = {
-    env = "test",
-    foo = "bar",
-    fee = "what"
-  }
-
-  boot_disk {
-    initialize_params {
-      image = "debian-cloud/debian-9"
-    }
-  }
-
-  network_interface {
-    network = "default"
-
-    access_config {
-      // Ephemeral IP
-    }
-  }
-  service_account {
-    scopes = ["userinfo-email", "compute-ro", "storage-ro"]
-  }
-}
-
-resource "google_project" "project-w-labels" {
-  name       = "My Project"
-  project_id = "random-project-w-labels"
-  org_id     = "1234567"
-
-  labels = {
-    env = "test",
-    foo = "bar"
-  }
-}
-
-resource "google_container_cluster" "has-label" {
-  name               = "marcellus-wallace"
-  location           = "us-central1-a"
-  initial_node_count = 3
-
-  master_auth {
-    username = ""
-    password = ""
-
-    client_certificate_config {
-      issue_client_certificate = false
-    }
-  }
-
-  node_config {
-    oauth_scopes = [
-      "https://www.googleapis.com/auth/logging.write",
-      "https://www.googleapis.com/auth/monitoring",
+/***************
+// Fail conditions
+*****************/
+data "google_iam_policy" "has-primitive" {
+  binding {
+    role = "Owner"
+    members = [
+      "serviceAccount:your-custom-sa@your-project.iam.gserviceaccount.com",
     ]
-
-    metadata = {
-      disable-legacy-endpoints = "true"
-    }
-
-    labels = {
-      env = "test",
-      foo = "bar"
-    }
-
-    tags = ["foo", "bar"]
   }
 
-  timeouts {
-    create = "30m"
-    update = "40m"
+  binding {
+    role = "roles/storage.objectViewer"
+    members = [
+      "user:alice@gmail.com",
+    ]
   }
 }
 
-resource "google_sql_database_instance" "has-labels" {
-  name             = "master-instance"
-  database_version = "POSTGRES_11"
-  region           = "us-central1"
+resource "google_billing_account_iam_member" "primitive-role" {
+  billing_account_id = "00AA00-000AAA-00AA0A"
+  role               = "Owner"
+  member             = "user:alice@gmail.com"
+}
 
-  settings {
-    # Second-generation instance tiers are based on the machine
-    # type. See argument reference below.
-    tier = "db-f1-micro"
-    user_labels = {
-      env = "dev",
-      foo = "bar"
-    }
-  }
+resource "google_kms_key_ring_iam_member" "primitive-role" {
+  key_ring_id = "your-key-ring-id"
+  role        = "viewer"
+  member      = "user:jane@example.com"
+}
+
+resource "google_organization_iam_member" "primitive-role" {
+  org_id = "0123456789"
+  role   = "Editor"
+  member = "user:alice@gmail.com"
+}
+
+resource "google_storage_bucket_iam_binding" "primitive-role" {
+  bucket = "my-bucket-id"
+  role = "Owner"
+  members = [
+    "user:jane@example.com",
+  ]
+}
+
+resource "google_project_iam_binding" "primitive-role" {
+  project = "your-project-id"
+  role    = "Editor"
+
+  members = [
+    "user:jane@example.com",
+  ]
+}
+
+resource "google_service_account_iam_binding" "primitive-role" {
+  service_account_id = "${google_service_account.sa.name}"
+  role               = "Viewer"
+
+  members = [
+    "user:jane@example.com",
+  ]
+}
+
+resource "google_service_account" "sa" {
+  account_id   = "my-service-account"
+  display_name = "A service account that only Jane can use"
 }
