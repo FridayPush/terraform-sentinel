@@ -14,7 +14,7 @@ resource "google_compute_firewall" "has-logging" {
 }
 
 resource "google_dns_policy" "has-logging" {
-  provider = google-beta
+  provider = "google-beta"
 
   name                      = "dns-policy"
   enable_inbound_forwarding = true
@@ -57,7 +57,7 @@ resource "google_compute_router_nat" "nat" {
 }
 
 resource "google_compute_backend_service" "has-logging" {
-  provider = google-beta
+  provider = "google-beta"
 
   name                  = "backend-service"
   health_checks         = [google_compute_health_check.health_check.self_link]
@@ -69,7 +69,7 @@ resource "google_compute_backend_service" "has-logging" {
 }
 
 resource "google_compute_health_check" "health_check" {
-  provider = google-beta
+  provider = "google-beta"
 
   name = "health-check"
   http_health_check {
