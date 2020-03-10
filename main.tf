@@ -1,11 +1,3 @@
-google_compute_firewall.enable_logging = true
-google_dns_policy.enable_logging = true
-google_data_fusion_instance.enable_stackdriver_logging = true
-google_compute_router_nat.log_config.enable = true
-google_compute_backend_service.log_config.enable = true
-google_compute_region_backend_service.log_config.enable = true
-google_container_cluster.logging_service != none
-google_storage_bucket.logging ('logging block exists')
 
 resource "google_compute_firewall" "has-logging" {
   name    = "test-firewall"
