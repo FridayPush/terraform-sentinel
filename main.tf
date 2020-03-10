@@ -140,3 +140,8 @@ resource "google_storage_bucket" "has-logging" {
   }
 }
 
+resource "google_storage_bucket" "reference" {
+  name          = "auto-expiring-bucket"
+  location      = "US"
+  force_destroy = true
+}
