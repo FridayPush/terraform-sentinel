@@ -17,7 +17,6 @@ resource "google_compute_firewall" "has-logging" {
 resource "google_compute_firewall" "reference" {
   name    = "test-firewall"
   network = "fakenetwork"
-  enable_logging = true
   
   allow {
     protocol = "icmp"
@@ -78,6 +77,15 @@ resource "google_compute_backend_service" "has-logging" {
   log_config {
     enable = true
   }
+}
+
+resource "google_compute_backend_service" "reference" {
+  provider = "google-beta"
+
+  name                  = "backend-service"
+  health_checks         = ["${google_compute_health_check.health_check.self_link}"]
+  load_balancing_scheme = "INTERNAL_SELF_MANAGED"
+  locality_lb_policy    = "ROUND_ROBIN"
 }
 
 resource "google_compute_health_check" "health_check" {
