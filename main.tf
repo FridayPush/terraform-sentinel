@@ -204,15 +204,6 @@ resource "google_compute_backend_service" "no-logging" {
   locality_lb_policy    = "ROUND_ROBIN"
 }
 
-resource "google_compute_health_check" "health_check" {
-  provider = "google-beta"
-
-  name = "health-check"
-  http_health_check {
-    port = 80
-  }
-}
-
 resource "google_compute_region_backend_service" "no-logging" {
   provider = "google-beta"
   
