@@ -60,7 +60,7 @@ resource "google_compute_backend_service" "has-logging" {
   provider = "google-beta"
 
   name                  = "backend-service"
-  health_checks         = [google_compute_health_check.health_check.self_link]
+  health_checks         = ["${google_compute_health_check.health_check.self_link}"]
   load_balancing_scheme = "INTERNAL_SELF_MANAGED"
   locality_lb_policy    = "ROUND_ROBIN"
   log_config {
@@ -80,7 +80,7 @@ resource "google_compute_health_check" "health_check" {
 resource "google_compute_region_backend_service" "has-logging" {
   name                            = "region-service"
   region                          = "us-central1"
-  health_checks                   = [google_compute_health_check.default.self_link]
+  health_checks                   = ["${google_compute_health_check.health_check.self_link}"]
   connection_draining_timeout_sec = 10
   session_affinity                = "CLIENT_IP"
   
