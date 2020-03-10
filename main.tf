@@ -17,6 +17,11 @@ data "google_iam_policy" "has-primitive" {
   }
 }
 
+resource "google_storage_bucket_iam_policy" "editor" {
+  bucket = "gs://notreal"
+  policy_data = "${data.google_iam_policy.has-primitive.policy_data}"
+}
+
 resource "google_billing_account_iam_member" "primitive-role" {
   billing_account_id = "00AA00-000AAA-00AA0A"
   role               = "Owner"
