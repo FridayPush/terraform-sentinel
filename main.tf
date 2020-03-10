@@ -95,7 +95,7 @@ resource "google_project" "project-w-labels" {
   }
 }
 
-resource "google_container_cluster" "mixed-label" {
+resource "google_container_cluster" "has-label" {
   name               = "marcellus-wallace"
   location           = "us-central1-a"
   initial_node_count = 3
@@ -133,7 +133,7 @@ resource "google_container_cluster" "mixed-label" {
   }
 }
 
-resource "google_sql_database_instance" "no-labels" {
+resource "google_sql_database_instance" "has-labels" {
   name             = "master-instance"
   database_version = "POSTGRES_11"
   region           = "us-central1"
