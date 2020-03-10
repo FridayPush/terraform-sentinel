@@ -1,3 +1,6 @@
+provider "google-beta" {
+
+}
 
 resource "google_compute_firewall" "has-logging" {
   name    = "test-firewall"
