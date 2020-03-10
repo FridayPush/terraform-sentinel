@@ -3,6 +3,18 @@ provider "google-beta" {
 }
 
 resource "google_compute_firewall" "has-logging" {
+  provider = "google-beta"
+  name    = "test-firewall"
+  network = "fakenetwork"
+  enable_logging = true
+  
+  allow {
+    protocol = "icmp"
+  }
+  source_tags = ["web"]
+}
+
+resource "google_compute_firewall" "reference" {
   name    = "test-firewall"
   network = "fakenetwork"
   enable_logging = true
@@ -78,6 +90,8 @@ resource "google_compute_health_check" "health_check" {
 }
 
 resource "google_compute_region_backend_service" "has-logging" {
+  provider = "google-beta"
+  
   name                            = "region-service"
   region                          = "us-central1"
   health_checks                   = ["${google_compute_health_check.health_check.self_link}"]
