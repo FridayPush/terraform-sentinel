@@ -1,184 +1,125 @@
-# This manifest only creates a dozen or so resources that contain labels
-# To produce the failed resources uncomment the bottom section
+google_compute_firewall.enable_logging = true
+google_dns_policy.enable_logging = true
+google_data_fusion_instance.enable_stackdriver_logging = true
+google_compute_router_nat.log_config.enable = true
+google_compute_backend_service.log_config.enable = true
+google_compute_region_backend_service.log_config.enable = true
+google_container_cluster.logging_service != none
+google_storage_bucket.logging ('logging block exists')
 
-resource "google_bigquery_dataset" "dataset-w-labels" {
-  dataset_id                  = "example_dataset"
-  friendly_name               = "test"
-  description                 = "This is a test description"
-  location                    = "US"
-  default_table_expiration_ms = 3600000
-
-  labels = {
-    env = "default",
-    pipe = "world",
-    foo = "test"
-  }
-}
-
-resource "google_bigquery_table" "default" {
-  dataset_id = "${google_bigquery_dataset.dataset-w-labels.dataset_id}"
-  table_id   = "bar"
-
-  labels = {
-    env = "default",
-    foo = "now"
-  }
-
-  schema = <<EOF
-[
-  {
-    "name": "permalink",
-    "type": "STRING",
-    "mode": "NULLABLE",
-    "description": "The Permalink"
-  },
-  {
-    "name": "state",
-    "type": "STRING",
-    "mode": "NULLABLE",
-    "description": "State where the head office is located"
-  }
-]
-EOF
-}
-
-resource "google_compute_image" "disk-w-labels" {
-  name = "example-image"
-
-  raw_disk {
-    source = "https://storage.googleapis.com/bosh-cpi-artifacts/bosh-stemcell-3262.4-google-kvm-ubuntu-trusty-go_agent-raw.tar.gz"
-  }
-
-  labels = {
-    env = "default",
-    foo = "what"
-  }
-}
-
-resource "google_compute_instance" "instance-w-labels" {
-  name         = "test"
-  machine_type = "n1-standard-1"
-  zone         = "us-central1-a"
+resource "google_compute_firewall" "has-logging" {
+  name    = "test-firewall"
+  network = "fakenetwork"
+  enable_logging = true
   
-  labels = {
-    env = "test",
-    foo = "bar",
-    fee = "what"
+  allow {
+    protocol = "icmp"
   }
+  source_tags = ["web"]
+}
 
-  boot_disk {
-    initialize_params {
-      image = "debian-cloud/debian-9"
+resource "google_dns_policy" "has-logging" {
+  provider = google-beta
+
+  name                      = "dns-policy"
+  enable_inbound_forwarding = true
+
+  enable_logging = true
+
+  alternative_name_server_config {
+    target_name_servers {
+      ipv4_address = "172.16.1.10"
+    }
+    target_name_servers {
+      ipv4_address = "172.16.1.20"
     }
   }
 
-  network_interface {
-    network = "default"
-
-    access_config {
-      // Ephemeral IP
-    }
-  }
-  service_account {
-    scopes = ["userinfo-email", "compute-ro", "storage-ro"]
+  networks {
+    network_url = "fakenetwork"
   }
 }
 
-resource "google_project" "project-w-labels" {
-  name       = "My Project"
-  project_id = "random-project-w-labels"
-  org_id     = "1234567"
+resource "google_data_fusion_instance" "has-logging" {
+  provider = "google-beta"
+  name = "my-instance"
+  region = "us-central1"
+  type = "BASIC"
+  enable_stackdriver_logging = true
+}
 
-  labels = {
-    env = "test",
-    foo = "bar"
+resource "google_compute_router_nat" "nat" {
+  name                               = "my-router-nat"
+  router                             = "routername"
+  region                             = "us-east1"
+  nat_ip_allocate_option             = "AUTO_ONLY"
+  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+
+  log_config {
+    enable = true
+    filter = "ERRORS_ONLY"
   }
 }
 
-resource "google_pubsub_topic" "topic-wo-labels" {
-  name = "example-topic"
+resource "google_compute_backend_service" "has-logging" {
+  provider = google-beta
 
-  labels = {
-    env = "test",
+  name                  = "backend-service"
+  health_checks         = [google_compute_health_check.health_check.self_link]
+  load_balancing_scheme = "INTERNAL_SELF_MANAGED"
+  locality_lb_policy    = "ROUND_ROBIN"
+  log_config {
+    enable = true
   }
 }
 
-resource "google_bigquery_dataset" "dataset-wo-labels" {
-  dataset_id                  = "example_dataset"
-  friendly_name               = "test"
-  description                 = "This is a test description"
-  location                    = "US"
-  default_table_expiration_ms = 3600000
+resource "google_compute_health_check" "health_check" {
+  provider = google-beta
 
-  labels = {
-    pipe = "world",
-    foo = "test"
+  name = "health-check"
+  http_health_check {
+    port = 80
   }
 }
 
-resource "google_bigquery_table" "table-wo-label" {
-  dataset_id = "${google_bigquery_dataset.dataset-w-labels.dataset_id}"
-  table_id   = "bar"
-
-  labels = {
-    test = "default",
-    feature = "now"
-  }
-
-  schema = <<EOF
-[
-  {
-    "name": "permalink",
-    "type": "STRING",
-    "mode": "NULLABLE",
-    "description": "The Permalink"
-  },
-  {
-    "name": "state",
-    "type": "STRING",
-    "mode": "NULLABLE",
-    "description": "State where the head office is located"
-  }
-]
-EOF
-}
-
-resource "google_compute_image" "disk-wo-labels" {
-  name = "example-image"
-
-  raw_disk {
-    source = "https://storage.googleapis.com/bosh-cpi-artifacts/bosh-stemcell-3262.4-google-kvm-ubuntu-trusty-go_agent-raw.tar.gz"
-  }
-
-  labels = {
-    foo = "what"
-  }
-}
-
-resource "google_compute_instance" "instance-wo-labels" {
-  name         = "test"
-  machine_type = "n1-standard-1"
-  zone         = "us-central1-a"
+resource "google_compute_region_backend_service" "has-logging" {
+  name                            = "region-service"
+  region                          = "us-central1"
+  health_checks                   = [google_compute_health_check.default.self_link]
+  connection_draining_timeout_sec = 10
+  session_affinity                = "CLIENT_IP"
   
-  labels = {
-    env = "test",
-    fee = "what"
-  }
-
-  boot_disk {
-    initialize_params {
-      image = "debian-cloud/debian-9"
-    }
-  }
-
-  network_interface {
-    network = "default"
-
-    access_config {
-      // Ephemeral IP
-    }
-  }
-  service_account {
-    scopes = ["userinfo-email", "compute-ro", "storage-ro"]
+  log_config {
+    enable = true
   }
 }
+
+resource "google_container_cluster" "has-logging" {
+  name     = "my-gke-cluster"
+  location = "us-central1"
+
+  # We can't create a cluster with no node pool defined, but we want to only use
+  # separately managed node pools. So we create the smallest possible default
+  # node pool and immediately delete it.
+  remove_default_node_pool = true
+  initial_node_count       = 1
+  logging_service = "logging.googleapis.com/kubernetes"
+  master_auth {
+    username = ""
+    password = ""
+
+    client_certificate_config {
+      issue_client_certificate = false
+    }
+  }
+}
+
+resource "google_storage_bucket" "has-logging" {
+  name          = "auto-expiring-bucket"
+  location      = "US"
+  force_destroy = true
+  logging {
+    log_bucket = "gs://notrealbucket/"
+  }
+}
+
